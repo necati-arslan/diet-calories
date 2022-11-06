@@ -1,37 +1,53 @@
 import { autocomplete } from "../utulities/autocomplate.js";
+import { Service } from "../services/service.js";
+import { createSelectedIngredient } from "../views/selected-ingredients.js";
 export const initWelcomePage = () => {
-  const ingredientTextbox = document.getElementById("ingredientTextbox");
+  const serviceIngredient = new Service();
 
-  ingredientTextbox.addEventListener("keyup", async (event) => {
+  const ingredientTextbox = document.getElementById("ingredientTextbox");
+  const btnAddNewIngradient = document.getElementById("btnAddNewIngradient");
+  const selectedIngredients = document.getElementById("selectedIngredient");
+  let ingredients = [];
+
+  ingredientTextbox.addEventListener("keydown", async (event) => {
     let valueText = event.target.value;
 
-    const data = await fetchIngredient();
-    console.log(data);
+    const queryString = `query=${valueText}&number=5`;
+    const data = await serviceIngredient.fetchIngredient(queryString);
+    console.log("welcopage", data);
+    autocomplete(ingredientTextbox, data, valueText);
   });
 
-  const fetchIngredient = () => {
-    const url = urlPrepare();
-    return fetch(url).then((data) => {
-      return data.json();
-    });
+  btnAddNewIngradient.addEventListener("click", (event) => {
+    if (ingredientTextbox.value == "") {
+      alert("görev girmelisiniz");
+    } else {
+      ingredients.push(ingredientTextbox.value);
+      addIngredient(ingredientTextbox.value);
+    }
+    ingredientTextbox.value = "";
+    event.preventDefault();
+  });
+
+  const deleteIngredient = (value) => {
+    ingredients = ingredients.filter((item) => item !== value);
+    displaySelectedIngredients(ingredients);
+    console.log(ingredients);
   };
 
-  const urlPrepare = () => {
-    const url =
-      "https://api.spoonacular.com/food/ingredients/autocomplete?apiKey=e178d8abd3d341d5b8d1f33c5f024a7f&query=appl&number=5";
-    return url;
+  const displaySelectedIngredients = (arr) => {
+    selectedIngredients.innerHTML = "";
+    ingredients.forEach((e) => addIngredient(e));
   };
-  var countries = [
-    "Afghanistan",
-    "Albania",
-    "Algeria",
-    "Andorra",
-    "Angola",
-    "Anguilla",
-    "Antigua & Barbuda",
-    "Argentina",
-    "Armenia",
-  ];
 
-  autocomplete(ingredientTextbox, countries);
+  const addIngredient = (value) => {
+    const elementSelectedIngrediend = createSelectedIngredient(value);
+    selectedIngredients.appendChild(elementSelectedIngrediend);
+    elementSelectedIngrediend
+      .querySelector(".cancel")
+      .addEventListener("click", (event) => {
+        const textValue = event.target.nextElementSibling.textContent;
+        deleteIngredient(textValue);
+      });
+  };
 };
