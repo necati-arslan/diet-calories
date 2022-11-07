@@ -8,10 +8,17 @@
     <title>Document</title>
   </head>
   <body>
-    <div id="root"></div>
     <section class="welcomePage">
+      <div class="logo">
+        <div class="flex">
+          <img src="assets/logo.png" alt="" />
+          <div class="logo_text"><span> Find</span>Recipe</div>
+        </div>
+      </div>
       <div class="container flex">
         <div class="content">
+          <h1>Let's Find Recipe by Ingredients</h1>
+
           <div class="flex autocomplete">
             <input
               id="ingredientTextbox"
@@ -22,10 +29,11 @@
             <button class="btnAdd" id="btnAddNewIngradient">Add</button>
           </div>
           <div id="selectedIngredient" class="selected_Ingredient flex"></div>
-          <button class="btn-red">Find</button>
+          <button id="getRecipes" class="btn-red">Find</button>
         </div>
       </div>
     </section>
+    <div id="root"></div>
 
     <script type="module" src="src/app.js"></script>
   </body>
