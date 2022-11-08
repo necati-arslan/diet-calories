@@ -1,26 +1,34 @@
 import { autocomplete } from "../utulities/autocomplate.js";
 import { Service } from "../services/service.js";
+import { ServiceUI } from "../services/serviceUI.js";
+import { AUTO_COMPLATE_URL } from "../constant.js";
 import { createSelectedIngredient } from "../views/selected-ingredients.js";
+import { getRecipes } from "./recipesPage.js";
 export const initWelcomePage = () => {
   const serviceIngredient = new Service();
+  const serviceUI = new ServiceUI();
 
   const ingredientTextbox = document.getElementById("ingredientTextbox");
   const btnAddNewIngradient = document.getElementById("btnAddNewIngradient");
   const selectedIngredients = document.getElementById("selectedIngredient");
+  const rootDiv = document.getElementById("root");
+
   let ingredients = [];
 
   ingredientTextbox.addEventListener("keydown", async (event) => {
     let valueText = event.target.value;
 
     const queryString = `query=${valueText}&number=5`;
-    const data = await serviceIngredient.fetchIngredient(queryString);
-    console.log("welcopage", data);
+    const data = await serviceIngredient.fetchIngredient(
+      AUTO_COMPLATE_URL,
+      queryString
+    );
     autocomplete(ingredientTextbox, data, valueText);
   });
 
   btnAddNewIngradient.addEventListener("click", (event) => {
     if (ingredientTextbox.value == "") {
-      alert("görev girmelisiniz");
+      serviceUI.notify("Textbox is empty");
     } else {
       ingredients.push(ingredientTextbox.value);
       addIngredient(ingredientTextbox.value);
@@ -32,7 +40,6 @@ export const initWelcomePage = () => {
   const deleteIngredient = (value) => {
     ingredients = ingredients.filter((item) => item !== value);
     displaySelectedIngredients(ingredients);
-    console.log(ingredients);
   };
 
   const displaySelectedIngredients = (arr) => {
@@ -50,4 +57,17 @@ export const initWelcomePage = () => {
         deleteIngredient(textValue);
       });
   };
+
+  document.getElementById("getRecipes").addEventListener("click", () => {
+    if (ingredients.length == 0) {
+      serviceUI.notify("Please insert at least one ingredient");
+    } else {
+      document.querySelector(".welcomePage").style.height = "auto";
+      rootDiv.innerHTML = "";
+      document
+        .querySelector("section.welcomePage .content")
+        .classList.add("content_after_query");
+      getRecipes(ingredients);
+    }
+  });
 };
