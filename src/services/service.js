@@ -20,6 +20,7 @@ export class Service {
   };
 
   handleError(err) {
+    localStorage.setItem("Time Error", Date.now());
     localStorage.setItem("err", err);
   }
 }
