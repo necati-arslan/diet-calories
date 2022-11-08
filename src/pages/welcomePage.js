@@ -18,12 +18,17 @@ export const initWelcomePage = () => {
   ingredientTextbox.addEventListener("keydown", async (event) => {
     let valueText = event.target.value;
 
-    const queryString = `query=${valueText}&number=5`;
-    const data = await serviceIngredient.fetchIngredient(
-      AUTO_COMPLATE_URL,
-      queryString
-    );
-    autocomplete(ingredientTextbox, data, valueText);
+    try {
+      const queryString = `query=${valueText}&number=5`;
+      const data = await serviceIngredient.fetchIngredient(
+        AUTO_COMPLATE_URL,
+        queryString
+      );
+      autocomplete(ingredientTextbox, data, valueText);
+    } catch (error) {
+      serviceIngredient.handleError(error);
+      serviceUI.notify("Oops! There is a problem!!!");
+    }
   });
 
   btnAddNewIngradient.addEventListener("click", (event) => {
